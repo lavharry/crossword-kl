@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Cozy Love Crossword ❤️</title>
+
+<style>
+body {
+  font-family: Georgia, serif;
+  background: linear-gradient(to bottom, #fff4e6, #ffe0e9);
+  text-align: center;
+  padding: 20px;
+  color: #5a3e36;
+}
+
+h1 {
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(11, 38px);
+  gap: 5px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+input {
+  width: 38px;
+  height: 38px;
+  text-align: center;
+  font-size: 18px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  border: 1px solid #d8b4a0;
+}
+
+.black {
+  background: #8d6e63;
+  border: none;
+}
+
+.clues {
+  max-width: 600px;
+  margin: 25px auto;
+  text-align: left;
+  background: #ffffffcc;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #b56576;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #8d4f5f;
+}
+
+#message {
+  margin-top: 25px;
+  font-size: 20px;
+  color: #6d597a;
+  min-height: 60px;
+}
+
+.footer {
+  margin-top: 30px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💘 Our Love Story Crossword 💘</h1>
+<p class="subtitle">Fill in the clues, Honey Honey ❤️</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="clues">
+  <h3>Across</h3>
+  <p>1. The dating website where our story began (7)</p>
+  <p>3. The month we said “I do” (4)</p>
+  <p>5. Our babymoon destination (6)</p>
+  <p>7. Our favorite thing to do under the night sky (11)</p>
+
+  <h3>Down</h3>
+  <p>1. My nickname for you (10)</p>
+  <p>2. Another sweet nickname I call you (6)</p>
+  <p>4. The number that matters most to us (5)</p>
+  <p>6. Our favorite pet (6)</p>
+  <p>8. Our beautiful children (7 & 7)</p>
+</div>
+
+<button onclick="checkAnswers()">Check Answers</button>
+
+<div id="message"></div>
+
+<div class="footer">
+Made with love ❤️
+</div>
+
+<script>
+const solution = [
+"O","K","C","U","P","I","D","","","","",
+"H","","","","","","","J","U","N","E",
+"O","","","","","","","",
+"N","","M","E","X","I","C","O","","","",
+"E","","","","","","","",
+"Y","","S","T","A","R","G","A","Z","I","N",
+"H","","","","","","","",
+"O","","","","","","","",
+"N","","","","","","","",
+"E","","","","","","","",
+"Y","","","","","","",""
+];
+
+const grid = document.getElementById("grid");
+
+solution.forEach(letter => {
+  const input = document.createElement("input");
+  input.maxLength = 1;
+
+  if (letter === "") {
+    input.classList.add("black");
+    input.disabled = true;
+  }
+
+  grid.appendChild(input);
+});
+
+function checkAnswers() {
+  const inputs = document.querySelectorAll(".grid input");
+  let correct = true;
+
+  inputs.forEach((input, i) => {
+    if (!input.classList.contains("black")) {
+      if (input.value.toUpperCase() !== solution[i]) {
+        correct = false;
+      }
+    }
+  });
+
+  if (correct) {
+    document.getElementById("message").innerHTML =
+      "💖 You solved it! 💖<br><br>Home is you.<br><br>From OkCupid to June vows, Mexico sunsets, stargazing nights, Mufasa cuddles, and raising Illaria & Elliott — I wouldn’t choose anyone else.";
+  } else {
+    document.getElementById("message").innerHTML =
+      "Not quite yet, Cactus 😉 Keep going, my love.";
+  }
+}
+</script>
+
+</body>
+</html>

@@ -3,125 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Open When... ❤️</title>
+<title>Under Our Stars ✨</title>
 
 <style>
 body {
+  margin: 0;
+  overflow: hidden;
   font-family: Georgia, serif;
-  background: linear-gradient(to bottom, #fff0f3, #ffe5ec);
+  background: linear-gradient(to bottom, #000814, #0b1d3a);
+  color: white;
   text-align: center;
-  padding: 20px;
-  color: #5a3e36;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  margin: auto;
+  padding: 40px 20px;
+  max-width: 700px;
 }
 
 h1 {
-  margin-bottom: 10px;
+  font-size: 30px;
+  margin-bottom: 15px;
 }
 
-.subtitle {
-  margin-bottom: 30px;
-  font-style: italic;
+.story, .final {
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 2s ease;
 }
 
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  max-width: 600px;
-  margin: auto;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  width: 150px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-}
-
-#messageBox {
+button {
   margin-top: 30px;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  min-height: 80px;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  background: #ff6b9d;
+  color: white;
+  cursor: pointer;
 }
 
-.final {
+button:hover {
+  background: #ff3f7f;
+}
+
+audio {
   margin-top: 20px;
-  font-size: 20px;
-  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<h1>💌 Open When... 💌</h1>
-<p class="subtitle">For my Honey Honey ❤️</p>
+<canvas id="stars"></canvas>
 
-<div class="container">
+<div class="content">
+  <h1>🌙 Under Our Stars 🌙</h1>
 
-  <div class="card" onclick="showMessage('sad')">
-    Open when you're sad
-  </div>
+  <audio controls>
+    <source src="romantic-ambient.mp3" type="audio/mpeg">
+    *Your browser doesn’t support audio controls*
+  </audio>
 
-  <div class="card" onclick="showMessage('happy')">
-    Open when you're happy
-  </div>
+  <p class="story" id="storyText">
+    It started on OkCupid…<br><br>
+    Then came June vows.<br><br>
+    Mexico sunsets.<br><br>
+    Stargazing nights.<br><br>
+    Mufasa cuddles.<br><br>
+    Illaria and Elliott laughter filling our home.<br><br>
+    Seven — our number.<br><br>
+    Honey Honey… Cactus…<br><br>
+    You are my forever sky.
+  </p>
 
-  <div class="card" onclick="showMessage('tired')">
-    Open when you're tired
-  </div>
+  <button onclick="reveal()">Watch the Sky Glow ✨</button>
 
-  <div class="card" onclick="showMessage('missme')">
-    Open when you miss me
-  </div>
-
-  <div class="card" onclick="showMessage('proud')">
-    Open when you're proud
-  </div>
-
-  <div class="card" onclick="showMessage('always')">
-    Open anytime ❤️
-  </div>
+  <p class="final" id="finalMessage">
+    Home is you. Always. 💖
+  </p>
 
 </div>
 
-<div id="messageBox"></div>
-<div id="finalMessage" class="final"></div>
-
 <script>
+// Starfield + Constellation Heart
 
-let opened = 0;
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
 
-function showMessage(type) {
-  const messages = {
-    sad: "Even on your hardest days, you are my steady place. From OkCupid to June vows, I’d choose you every single time.",
-    happy: "Your smile lights up my whole world — brighter than our stargazing nights.",
-    tired: "Rest, my Cactus. You carry so much for our family — Illaria, Elliott, Mufasa, and me.",
-    missme: "No matter where we are, Mexico sunsets or cozy nights at home — my heart is always with you.",
-    proud: "Seven is our number, but you are my forever. I’m endlessly proud of the man you are.",
-    always: "Honey Honey… you are my home. My safe place. My greatest love story."
-  };
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  document.getElementById("messageBox").innerHTML = messages[type];
-  opened++;
+// create stars
+let stars = [];
+for (let i = 0; i < 200; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2,
+    alpha: Math.random()
+  });
+}
 
-  if (opened >= 4) {
-    document.getElementById("finalMessage").innerHTML =
-      "💖 Final Surprise 💖<br><br>I love the life we’ve built — from June promises to stargazing dreams. Forever yours.";
+// draw twinkling stars
+function drawStarfield() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    ctx.fill();
+    s.alpha += (Math.random() - 0.5) * 0.02;
+    if (s.alpha < 0) s.alpha = 0;
+    if (s.alpha > 1) s.alpha = 1;
+  });
+
+  requestAnimationFrame(drawStarfield);
+}
+
+drawStarfield();
+
+// heart constellation points
+const heartPoints = [];
+for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+  const x = 300 + 120 * Math.sin(angle) ** 3;
+  const y = 200 - (130 * Math.cos(angle) - 50 * Math.cos(2 * angle) - 20 * Math.cos(3 * angle) - 10 * Math.cos(4 * angle));
+  heartPoints.push({x, y});
+}
+
+let heartFrame = 0;
+function drawHeart() {
+  // fade in constellation
+  if (heartFrame < heartPoints.length) heartFrame++;
+  ctx.strokeStyle = "rgba(255, 182, 193, 0.8)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < heartFrame; i++) {
+    if (i === 0) ctx.moveTo(heartPoints[i].x, heartPoints[i].y);
+    else ctx.lineTo(heartPoints[i].x, heartPoints[i].y);
   }
+  ctx.stroke();
+
+  if (heartFrame < heartPoints.length) requestAnimationFrame(drawHeart);
+}
+
+function reveal() {
+  document.getElementById("storyText").style.opacity = 1;
+  setTimeout(() => {
+    document.getElementById("finalMessage").style.opacity = 1;
+    drawHeart();
+  }, 4000);
 }
 
 </script>

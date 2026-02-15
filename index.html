@@ -1,276 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Crossword for You 💛</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<title>Open When... ❤️</title>
+
 <style>
-  :root {
-    --cream:#f5f0e8; --warm:#ede5d0; --ink:#2c2416; --ink-light:#5a4f3e;
-    --gold:#c8973a; --rust:#a85c32; --sage:#6b7c5e;
-    --correct:#6b7c5e; --wrong:#a85c32; --active:#c8973a; --cell:40px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background-color:var(--cream);background-image:radial-gradient(ellipse at 20% 10%,rgba(200,151,58,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(168,92,50,.06) 0%,transparent 50%);color:var(--ink);font-family:'Lora',Georgia,serif;min-height:100vh;padding:20px 16px 60px;}
-  header{text-align:center;padding:28px 0 20px;}
-  .header-ornament{font-size:.85rem;color:var(--gold);letter-spacing:.4em;font-family:'Lora',serif;font-style:italic;opacity:.8;display:block;margin-bottom:8px;}
-  header h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:700;color:var(--ink);line-height:1.15;}
-  header h1 em{font-style:italic;color:var(--rust);}
-  .divider{display:flex;align-items:center;gap:10px;margin:12px auto;width:fit-content;color:var(--gold);font-size:.85rem;}
-  .divider::before,.divider::after{content:'';width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-  .subtitle{font-family:'Lora',serif;font-style:italic;color:var(--ink-light);font-size:.88rem;margin-top:6px;}
-  .game-layout{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;max-width:980px;margin:0 auto;align-items:start;}
-  @media(max-width:760px){.game-layout{grid-template-columns:1fr;}.clues-across{order:2;}.crossword-wrap{order:1;}.clues-down{order:3;}}
-  .clue-panel{background:var(--warm);border:1px solid rgba(200,151,58,.25);border-radius:4px;padding:18px;box-shadow:2px 3px 12px rgba(44,36,22,.07);}
-  .clue-panel h2{font-family:'Playfair Display',serif;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid rgba(200,151,58,.3);padding-bottom:7px;margin-bottom:12px;}
-  .clue-list{list-style:none;}
-  .clue-list li{font-size:.8rem;line-height:1.5;padding:4px 0;border-bottom:1px dotted rgba(44,36,22,.1);cursor:pointer;color:var(--ink-light);transition:color .15s,padding-left .15s;}
-  .clue-list li:last-child{border-bottom:none;}
-  .clue-list li:hover{color:var(--ink);padding-left:3px;}
-  .clue-list li .num{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);margin-right:4px;font-size:.78rem;}
-  .clue-list li.active-clue{color:var(--ink);font-style:italic;}
-  .clue-list li.solved-clue{color:var(--sage);text-decoration:line-through;opacity:.6;}
-  .crossword-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
-  .grid-container{background:var(--warm);border:1px solid rgba(200,151,58,.3);border-radius:4px;padding:12px;box-shadow:3px 4px 16px rgba(44,36,22,.1);overflow-x:auto;}
-  #crossword-grid{display:grid;gap:2px;user-select:none;}
-  .cell{width:var(--cell);height:var(--cell);position:relative;}
-  .cell.black{background:var(--ink);border-radius:2px;}
-  .cell input{width:100%;height:100%;border:1.5px solid rgba(200,151,58,.35);border-radius:2px;background:#faf7f0;color:var(--ink);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;text-align:center;text-transform:uppercase;cursor:pointer;outline:none;padding:0;caret-color:transparent;transition:background .15s,border-color .15s;}
-  .cell input:focus,.cell input.selected{border-color:var(--active);background:#fff8e8;box-shadow:0 0 0 2px rgba(200,151,58,.18);z-index:2;}
-  .cell input.in-word{background:#f7f0dc;border-color:rgba(200,151,58,.5);}
-  .cell input.correct{background:#eaf2e8;border-color:var(--correct);color:var(--correct);}
-  .cell input.wrong{background:#fceae4;border-color:var(--wrong);color:var(--wrong);}
-  .cell-number{position:absolute;top:2px;left:3px;font-size:.5rem;font-family:'Lora',serif;font-weight:600;color:var(--ink-light);pointer-events:none;z-index:3;line-height:1;}
-  .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-  button{font-family:'Lora',serif;font-size:.75rem;letter-spacing:.1em;padding:7px 16px;border-radius:2px;border:1.5px solid;cursor:pointer;transition:all .15s;text-transform:uppercase;}
-  .btn-check{background:var(--ink);color:var(--cream);border-color:var(--ink);}
-  .btn-check:hover{background:var(--rust);border-color:var(--rust);}
-  .btn-reveal{background:transparent;color:var(--ink-light);border-color:rgba(44,36,22,.3);}
-  .btn-reveal:hover{border-color:var(--gold);color:var(--ink);}
-  .btn-clear{background:transparent;color:var(--ink-light);border-color:rgba(44,36,22,.2);}
-  .btn-clear:hover{border-color:var(--rust);color:var(--rust);}
-  .progress-wrap{text-align:center;font-family:'Lora',serif;font-style:italic;font-size:.8rem;color:var(--ink-light);}
-  .progress-bar-bg{width:180px;height:4px;background:rgba(44,36,22,.12);border-radius:2px;margin:6px auto 0;overflow:hidden;}
-  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--rust));border-radius:2px;transition:width .4s ease;}
-  .win-overlay{display:none;position:fixed;inset:0;background:rgba(44,36,22,.65);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;}
-  .win-overlay.show{display:flex;}
-  .win-card{background:var(--cream);border:1px solid rgba(200,151,58,.4);border-radius:6px;padding:42px 38px;text-align:center;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(44,36,22,.3);animation:cardIn .4s ease;}
-  @keyframes cardIn{from{transform:translateY(18px) scale(.97);opacity:0}to{transform:none;opacity:1}}
-  .win-card .hearts{font-size:1.9rem;letter-spacing:.2em;margin-bottom:14px;animation:pulse 1.5s ease infinite;}
-  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-  .win-card h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:10px;}
-  .win-card h2 em{color:var(--rust);font-style:italic;}
-  .win-card p{font-family:'Lora',serif;font-style:italic;color:var(--ink-light);font-size:.88rem;line-height:1.65;margin-bottom:20px;}
-  .btn-play-again{background:var(--ink);color:var(--cream);border-color:var(--ink);padding:10px 26px;font-size:.78rem;}
-  .btn-play-again:hover{background:var(--rust);border-color:var(--rust);}
-  footer{text-align:center;font-family:'Lora',serif;font-style:italic;color:var(--gold);font-size:.75rem;margin-top:46px;opacity:.6;}
+body {
+  font-family: Georgia, serif;
+  background: linear-gradient(to bottom, #fff0f3, #ffe5ec);
+  text-align: center;
+  padding: 20px;
+  color: #5a3e36;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 150px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+#messageBox {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 80px;
+}
+
+.final {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
 </style>
 </head>
+
 <body>
-<header>
-  <span class="header-ornament">✦ Happy Valentine's Day ✦</span>
-  <h1>A Crossword for <em>Honey Honey</em></h1>
-  <div class="divider">♡</div>
-  <p class="subtitle">Clues from our story — can you solve them all?</p>
-</header>
-<div class="game-layout">
-  <div class="clue-panel clues-across">
-    <h2>Across</h2>
-    <ul class="clue-list" id="across-clues"></ul>
+
+<h1>💌 Open When... 💌</h1>
+<p class="subtitle">For my Honey Honey ❤️</p>
+
+<div class="container">
+
+  <div class="card" onclick="showMessage('sad')">
+    Open when you're sad
   </div>
-  <div class="crossword-wrap">
-    <div class="grid-container"><div id="crossword-grid"></div></div>
-    <div class="progress-wrap">
-      <span id="progress-text">0 of 13 words solved</span>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-check" onclick="checkAll()">Check All</button>
-      <button class="btn-reveal" onclick="revealCurrent()">Reveal Word</button>
-      <button class="btn-clear" onclick="clearAll()">Clear</button>
-    </div>
+
+  <div class="card" onclick="showMessage('happy')">
+    Open when you're happy
   </div>
-  <div class="clue-panel clues-down">
-    <h2>Down</h2>
-    <ul class="clue-list" id="down-clues"></ul>
+
+  <div class="card" onclick="showMessage('tired')">
+    Open when you're tired
   </div>
+
+  <div class="card" onclick="showMessage('missme')">
+    Open when you miss me
+  </div>
+
+  <div class="card" onclick="showMessage('proud')">
+    Open when you're proud
+  </div>
+
+  <div class="card" onclick="showMessage('always')">
+    Open anytime ❤️
+  </div>
+
 </div>
-<div class="win-overlay" id="win-overlay">
-  <div class="win-card">
-    <div class="hearts">🧡 💛 🧡</div>
-    <h2>You solved it, <em>Cactus!</em></h2>
-    <p>Every clue, every letter — a little piece of our story.<br>
-    Seven years, two beautiful kids, one regal cat,<br>
-    a babymoon under Mexican skies, and a whole universe of stars.<br><br>
-    Happy Valentine's Day. I love you.</p>
-    <button class="btn-play-again" onclick="resetGame()">Play Again ♡</button>
-  </div>
-</div>
-<footer>made with love ✦ for you, always</footer>
+
+<div id="messageBox"></div>
+<div id="finalMessage" class="final"></div>
+
 <script>
-const WORDS=[
-  {word:"OKCUPID",   clue:"The website where our story began",                            row:0, col:3, dir:"across"},
-  {word:"HONEY",     clue:"The first (and second!) word of your sweetest nickname",       row:2, col:0, dir:"across"},
-  {word:"MUFASA",    clue:"Our regal cat, named after the greatest Lion King",            row:4, col:4, dir:"across"},
-  {word:"JUNE",      clue:"The month we said \"I do\"",                                   row:6, col:0, dir:"across"},
-  {word:"SEVEN",     clue:"The number that matters most to us",                           row:6, col:6, dir:"across"},
-  {word:"MEXICO",    clue:"Where we went for our babymoon",                               row:8, col:0, dir:"across"},
-  {word:"STARS",     clue:"What we count while lying side by side at night",              row:8, col:7, dir:"across"},
-  {word:"ILLARIA",   clue:"Our firstborn, our sunshine girl",                             row:10,col:3, dir:"across"},
-  {word:"ELLIOTT",   clue:"Our youngest, who completes our family",                       row:12,col:3, dir:"across"},
-  {word:"CACTUS",    clue:"Your pet name — tough on the outside, soft at heart",          row:0, col:9, dir:"down"},
-  {word:"STARGAZING",clue:"Our favourite thing to do together under the night sky",       row:0, col:5, dir:"down"},
-  {word:"MOON",      clue:"What rises while we gaze up together",                         row:4, col:3, dir:"down"},
-  {word:"KIDS",      clue:"Illaria and Elliott — our greatest adventure",                 row:6, col:11,dir:"down"},
-];
-const ROWS=13,COLS=13;
-let grid=Array.from({length:ROWS},()=>Array(COLS).fill(null));
-WORDS.forEach((w,wi)=>{
-  for(let i=0;i<w.word.length;i++){
-    const r=w.dir==='across'?w.row:w.row+i,c=w.dir==='across'?w.col+i:w.col;
-    if(r<0||r>=ROWS||c<0||c>=COLS)continue;
-    if(!grid[r][c])grid[r][c]={letter:w.word[i],wordIds:[]};
-    grid[r][c].wordIds.push(wi);
-  }
-});
-let cellNums={},wordNums={},n=1;
-WORDS.forEach((w,wi)=>{
-  const k=`${w.row},${w.col}`;
-  if(!cellNums[k])cellNums[k]=n++;
-  wordNums[wi]=cellNums[k];
-});
-const acrossWords=WORDS.map((w,i)=>({...w,wi:i})).filter(w=>w.dir==='across').sort((a,b)=>wordNums[a.wi]-wordNums[b.wi]);
-const downWords=WORDS.map((w,i)=>({...w,wi:i})).filter(w=>w.dir==='down').sort((a,b)=>wordNums[a.wi]-wordNums[b.wi]);
-const gridEl=document.getElementById('crossword-grid');
-gridEl.style.gridTemplateColumns=`repeat(${COLS},var(--cell))`;
-gridEl.style.gridTemplateRows=`repeat(${ROWS},var(--cell))`;
-let inputs={};
-for(let r=0;r<ROWS;r++){
-  for(let c=0;c<COLS;c++){
-    const div=document.createElement('div');div.className='cell';
-    const key=`${r},${c}`;
-    if(!grid[r][c]){div.classList.add('black');}
-    else{
-      if(cellNums[key]){const sp=document.createElement('span');sp.className='cell-number';sp.textContent=cellNums[key];div.appendChild(sp);}
-      const inp=document.createElement('input');inp.type='text';inp.maxLength=1;inp.dataset.row=r;inp.dataset.col=c;
-      inp.addEventListener('keydown',onKeyDown);inp.addEventListener('click',onCellClick);inp.addEventListener('input',onInput);
-      div.appendChild(inp);inputs[key]=inp;
-    }
-    gridEl.appendChild(div);
+
+let opened = 0;
+
+function showMessage(type) {
+  const messages = {
+    sad: "Even on your hardest days, you are my steady place. From OkCupid to June vows, I’d choose you every single time.",
+    happy: "Your smile lights up my whole world — brighter than our stargazing nights.",
+    tired: "Rest, my Cactus. You carry so much for our family — Illaria, Elliott, Mufasa, and me.",
+    missme: "No matter where we are, Mexico sunsets or cozy nights at home — my heart is always with you.",
+    proud: "Seven is our number, but you are my forever. I’m endlessly proud of the man you are.",
+    always: "Honey Honey… you are my home. My safe place. My greatest love story."
+  };
+
+  document.getElementById("messageBox").innerHTML = messages[type];
+  opened++;
+
+  if (opened >= 4) {
+    document.getElementById("finalMessage").innerHTML =
+      "💖 Final Surprise 💖<br><br>I love the life we’ve built — from June promises to stargazing dreams. Forever yours.";
   }
 }
-let activeCell=null,activeDir='across',activeWordIdx=null;
-function getWordForCell(r,c,dir){const ids=grid[r]?.[c]?.wordIds??[];return ids.find(i=>WORDS[i].dir===dir)??ids[0]??null;}
-function selectWord(wi){activeWordIdx=wi;if(wi===null){clearHL();return;}activeDir=WORDS[wi].dir;highlightWord(wi);updateClueHL();}
-function clearHL(){Object.values(inputs).forEach(i=>i.classList.remove('selected','in-word'));}
-function highlightWord(wi){
-  clearHL();if(wi===null)return;
-  const w=WORDS[wi];
-  for(let i=0;i<w.word.length;i++){const r=w.dir==='across'?w.row:w.row+i,c=w.dir==='across'?w.col+i:w.col;const inp=inputs[`${r},${c}`];if(inp)inp.classList.add('in-word');}
-  if(activeCell){const inp=inputs[`${activeCell[0]},${activeCell[1]}`];if(inp){inp.classList.remove('in-word');inp.classList.add('selected');}}
-}
-function onCellClick(e){
-  const r=+e.target.dataset.row,c=+e.target.dataset.col;
-  if(activeCell&&activeCell[0]===r&&activeCell[1]===c){
-    const ids=grid[r][c].wordIds,other=ids.find(i=>WORDS[i].dir!==activeDir);
-    if(other!==undefined){activeDir=WORDS[other].dir;selectWord(other);}
-  }else{
-    activeCell=[r,c];const wi=getWordForCell(r,c,activeDir);
-    if(wi!==null)selectWord(wi);
-    else{const ids=grid[r][c]?.wordIds??[];if(ids.length){activeDir=WORDS[ids[0]].dir;selectWord(ids[0]);}}
-  }
-  inputs[`${r},${c}`]?.focus();
-}
-function onInput(e){
-  const v=e.target.value.replace(/[^a-zA-Z]/g,'').toUpperCase();
-  e.target.value=v?v[v.length-1]:'';e.target.classList.remove('correct','wrong');
-  if(e.target.value)moveNext();updateProgress();
-}
-function onKeyDown(e){
-  const r=+e.target.dataset.row,c=+e.target.dataset.col;
-  if(e.key==='Backspace'){if(e.target.value==='')movePrev();else{e.target.value='';e.target.classList.remove('correct','wrong');}updateProgress();e.preventDefault();return;}
-  if(e.key==='ArrowRight'){focusCell(r,c+1);e.preventDefault();}
-  if(e.key==='ArrowLeft'){focusCell(r,c-1);e.preventDefault();}
-  if(e.key==='ArrowDown'){focusCell(r+1,c);e.preventDefault();}
-  if(e.key==='ArrowUp'){focusCell(r-1,c);e.preventDefault();}
-  if(e.key==='Tab'){e.preventDefault();cycleWord(e.shiftKey?-1:1);}
-}
-function focusCell(r,c){const k=`${r},${c}`;if(inputs[k]){activeCell=[r,c];const wi=getWordForCell(r,c,activeDir);if(wi!==null)selectWord(wi);inputs[k].focus();}}
-function moveNext(){
-  if(activeWordIdx===null||!activeCell)return;
-  const w=WORDS[activeWordIdx],[r,c]=activeCell;
-  const nr=w.dir==='across'?r:r+1,nc=w.dir==='across'?c+1:c,nk=`${nr},${nc}`;
-  if(inputs[nk]&&grid[nr]?.[nc]?.wordIds.includes(activeWordIdx)){activeCell=[nr,nc];inputs[nk].focus();highlightWord(activeWordIdx);}
-}
-function movePrev(){
-  if(activeWordIdx===null||!activeCell)return;
-  const w=WORDS[activeWordIdx],[r,c]=activeCell;
-  const pr=w.dir==='across'?r:r-1,pc=w.dir==='across'?c-1:c,pk=`${pr},${pc}`;
-  if(inputs[pk]&&grid[pr]?.[pc]?.wordIds.includes(activeWordIdx)){activeCell=[pr,pc];inputs[pk].focus();highlightWord(activeWordIdx);}
-}
-function cycleWord(delta){
-  const all=[...acrossWords,...downWords];
-  if(activeWordIdx===null){const w=all[0];selectWord(w.wi);activeCell=[w.row,w.col];inputs[`${w.row},${w.col}`]?.focus();return;}
-  const idx=all.findIndex(w=>w.wi===activeWordIdx),nw=all[(idx+delta+all.length)%all.length];
-  selectWord(nw.wi);activeDir=nw.dir;
-  for(let i=0;i<nw.word.length;i++){
-    const r=nw.dir==='across'?nw.row:nw.row+i,c=nw.dir==='across'?nw.col+i:nw.col;
-    if(inputs[`${r},${c}`]&&!inputs[`${r},${c}`].value){activeCell=[r,c];inputs[`${r},${c}`].focus();return;}
-  }
-  activeCell=[nw.row,nw.col];inputs[`${nw.row},${nw.col}`]?.focus();
-}
-function buildClues(){
-  const aEl=document.getElementById('across-clues'),dEl=document.getElementById('down-clues');
-  acrossWords.forEach(w=>{
-    const li=document.createElement('li');li.id=`clue-${w.wi}`;
-    li.innerHTML=`<span class="num">${wordNums[w.wi]}.</span>${w.clue}`;
-    li.onclick=()=>{selectWord(w.wi);activeDir='across';activeCell=[w.row,w.col];inputs[`${w.row},${w.col}`]?.focus();};
-    aEl.appendChild(li);
-  });
-  downWords.forEach(w=>{
-    const li=document.createElement('li');li.id=`clue-${w.wi}`;
-    li.innerHTML=`<span class="num">${wordNums[w.wi]}.</span>${w.clue}`;
-    li.onclick=()=>{selectWord(w.wi);activeDir='down';activeCell=[w.row,w.col];inputs[`${w.row},${w.col}`]?.focus();};
-    dEl.appendChild(li);
-  });
-}
-buildClues();
-function updateClueHL(){document.querySelectorAll('.clue-list li').forEach(li=>li.classList.remove('active-clue'));if(activeWordIdx!==null)document.getElementById(`clue-${activeWordIdx}`)?.classList.add('active-clue');}
-function checkAll(){
-  WORDS.forEach((w,wi)=>{
-    for(let i=0;i<w.word.length;i++){
-      const r=w.dir==='across'?w.row:w.row+i,c=w.dir==='across'?w.col+i:w.col,inp=inputs[`${r},${c}`];
-      if(inp&&inp.value){inp.classList.remove('correct','wrong');inp.classList.add(inp.value.toUpperCase()===w.word[i]?'correct':'wrong');}
-    }
-  });updateProgress();
-}
-function revealCurrent(){
-  if(activeWordIdx===null)return;const w=WORDS[activeWordIdx];
-  for(let i=0;i<w.word.length;i++){
-    const r=w.dir==='across'?w.row:w.row+i,c=w.dir==='across'?w.col+i:w.col,inp=inputs[`${r},${c}`];
-    if(inp){inp.value=w.word[i];inp.classList.remove('wrong');inp.classList.add('correct');}
-  }updateProgress();
-}
-function clearAll(){Object.values(inputs).forEach(inp=>{inp.value='';inp.classList.remove('correct','wrong');});updateProgress();}
-function isWordSolved(wi){
-  const w=WORDS[wi];
-  for(let i=0;i<w.word.length;i++){const r=w.dir==='across'?w.row:w.row+i,c=w.dir==='across'?w.col+i:w.col,inp=inputs[`${r},${c}`];if(!inp||inp.value.toUpperCase()!==w.word[i])return false;}
-  return true;
-}
-function updateProgress(){
-  let solved=0;
-  WORDS.forEach((_,wi)=>{
-    const s=isWordSolved(wi);if(s)solved++;
-    const li=document.getElementById(`clue-${wi}`);if(li){if(s)li.classList.add('solved-clue');else li.classList.remove('solved-clue');}
-  });
-  const total=WORDS.length;
-  document.getElementById('progress-text').textContent=`${solved} of ${total} words solved`;
-  document.getElementById('progress-fill').style.width=`${(solved/total)*100}%`;
-  if(solved===total)setTimeout(()=>document.getElementById('win-overlay').classList.add('show'),400);
-}
-function resetGame(){clearAll();document.getElementById('win-overlay').classList.remove('show');}
-selectWord(acrossWords[0].wi);activeCell=[acrossWords[0].row,acrossWords[0].col];inputs[`${acrossWords[0].row},${acrossWords[0].col}`]?.focus();
+
 </script>
+
 </body>
 </html>
